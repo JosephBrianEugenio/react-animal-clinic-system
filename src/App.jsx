@@ -1,8 +1,9 @@
 import { useState } from "react";
 import "./App.css";
-import NavigationBar from "./Layouts/NavigationBar";
+import Layout from "./Layouts/NavigationBar";
 import Authentication from "./pages/Authentication";
 import RecordsPage from "./pages/Records";
+import CreateRecordPage from "./pages/CreateRecord";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -10,8 +11,9 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Authentication />} />
-        <Route path="/app" element={<NavigationBar />}>
-          <Route path="records" element={<RecordsPage />} />
+        <Route path="/" element={<Layout />}>
+          <Route index path="records" element={<RecordsPage />} />
+          <Route path="create-record" element={<CreateRecordPage />} />
         </Route>
       </Routes>
     </>

@@ -4,7 +4,7 @@ const LoginComponent = () => {
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    let path = `/app/records`;  
+    let path = `/records`;  
     navigate(path);
   };
 
@@ -17,6 +17,7 @@ const LoginComponent = () => {
       <div className="bg-gray-100 flex flex-col justify-center">
         <form className="max-w-[400px] w-full mx-auto bg-white p-4">
           <h6 className="text-4xl font-bold text-center py-6">Joseph</h6>
+          {/* <h3>{import.meta.env.VITE_BASE_URL}</h3> */}
           <div>
             <label
               htmlFor="email"
