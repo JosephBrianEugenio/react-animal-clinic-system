@@ -5,10 +5,13 @@ import Authentication from "./pages/Authentication";
 import RecordsPage from "./pages/Records";
 import CreateRecordPage from "./pages/CreateRecord";
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Authentication />} />
         <Route path="/" element={<Layout />}>

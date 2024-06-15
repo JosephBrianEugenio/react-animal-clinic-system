@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table } from "flowbite-react";
+import useGetRecordFetch from "../hooks/Records/GetRecords";
 import CreateRecordDialog from "../components/Dialogs/CreateRecordDialog";
 
 // Static array of data for the table
@@ -31,7 +32,11 @@ const data = [
 ];
 
 const RecordsPage = () => {
-  const [openModal, setOpenModal] = useState(false);
+  const { getAnimalRecordsFromAPI, records, loading } = useGetRecordFetch();
+
+  useEffect(() => {
+    getAnimalRecordsFromAPI();
+  }, []); // Fetch data on component mount
 
   return (
     <>
@@ -49,70 +54,77 @@ const RecordsPage = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {data.map((record, index) => (
-              <Table.Row
-                key={index}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {record.petName}
-                </Table.Cell>
-                <Table.Cell>{record.breed}</Table.Cell>
-                <Table.Cell>{record.chiefComplaint}</Table.Cell>
-                <Table.Cell>{record.followUpCheckupDate}</Table.Cell>
-                <Table.Cell>{record.parentName}</Table.Cell>
-                <Table.Cell>{record.createdAt}</Table.Cell>
-                <Table.Cell>
-                  <button
-                    type="button"
-                    class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
-                  >
-                    <svg
-                      className="w-4 h-4 text-white-800 dark:text-white"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
+            {loading ? (
+              <tr>
+                <td colSpan="7" className="text-center py-4">
+                  Loading...
+                </td>
+              </tr>
+            ) : (
+              records.map((record) => (
+                <Table.Row
+                  key={record.id} 
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {record.pets}
+                  </Table.Cell>
+                  <Table.Cell>{record.breed}</Table.Cell>
+                  <Table.Cell>{record.chief_complaint}</Table.Cell>
+                  <Table.Cell>{record.followup_checkup_date}</Table.Cell>
+                  <Table.Cell>{record.parent_name}</Table.Cell>
+                  <Table.Cell>{record.created_at}</Table.Cell>
+                  <Table.Cell>
+                    <button
+                      type="button"
+                      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
                     >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
-                      />
-                    </svg>
-                    <span className="sr-only">Icon description</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
-                  >
-                    <svg
-                      className="w-4 h-4 text-red-800 dark:text-white"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                      <svg
+                        className="w-4 h-4 text-white-800 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
+                        />
+                      </svg>
+                      <span className="sr-only">Edit Icon</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
                     >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
-                      />
-                    </svg>
-
-                    <span className="sr-only">Icon description</span>
-                  </button>
-                </Table.Cell>
-              </Table.Row>
-            ))}
+                      <svg
+                        className="w-4 h-4 text-red-800 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+                        />
+                      </svg>
+                      <span className="sr-only">Delete Icon</span>
+                    </button>
+                  </Table.Cell>
+                </Table.Row>
+              ))
+            )}
           </Table.Body>
         </Table>
       </div>
