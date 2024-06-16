@@ -12,7 +12,6 @@ const useLoginFetch = () => {
         password: password,
       });
       if (response.statusText === "OK") {
-        console.log("response");
         localStorage.setItem("access_token", response.data.data.access_token);
         setSuccess(true);
         toast.success(response.data.message);

@@ -1,42 +1,215 @@
-import { Button, Label, TextInput, Textarea } from "flowbite-react";
+import useCreateRecords from "../hooks/Records/CreateNewRecord";
+import { Button, Label, TextInput, Textarea, Select } from "flowbite-react";
+import { useState } from "react";
+import { Datepicker } from "flowbite-react";
 
 const CreateRecordPage = () => {
+  const { createRecord } = useCreateRecords();
+
+  const [formState, setFormState] = useState({
+    parents_name: "test",
+    parents_address: "test",
+    parents_contact_number: "test",
+    pets_name: "test",
+    pet_species: "test",
+    pets_breed: "test",
+    pets_sex: "Mx",
+    pets_birthday: "2004-12-12",
+    chief_complaint: "test",
+    medication_given_prior_to_check_up: "test",
+    last_vaccination_given: "test",
+    last_vaccination_date: "2004-12-12",
+    last_deworming_brand: "test",
+    last_deworming_date: "2004-12-12",
+    is_transferred_from_other_clinic: false,
+    weight: "test",
+    initial_temp: "test",
+    is_HR: false,
+    is_RR: false,
+    abnormal_findings: "test",
+    is_cbc: false,
+    prognosis: "test",
+    tentative_diagnosis: "test",
+    treatment_given: "test",
+    take_home_meds: "tesdt",
+    recommendations: "test",
+    followup_checkup_date: "2004-12-12",
+  });
+
+  const [dateInput, setDateInput] = useState("");
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    // Only update state if the value is a number
+    if (/^\d*$/.test(value)) {
+      setFormState({
+        ...formState,
+        weight: value,
+      });
+    }
+  };
+
+  const onHandleSubmit = async (e) => {
+    e.preventDefault();
+    const result = await createRecord(formState);
+
+    if (result) {
+      console.log("resultsss");
+      return;
+    }
+  };
+
+
   return (
     <div className="max-w-screen-xl mx-auto px-4">
       <div className="text-start">Create Record</div>
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-        {/* <div className="col-span-2 md:col-span-1">
+      <form
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left"
+        onSubmit={onHandleSubmit}
+      >
+        <div className="col-span-2">
+          <h1>Parent Information</h1>
+        </div>
+        <div className="col-span-2">
           <div className="mb-2 block">
-            <Label htmlFor="email1" value="Your email" />
+            <Label htmlFor="ParentName" value="Parent Name" />
           </div>
           <TextInput
-            id="email1"
-            type="email"
-            placeholder="name@flowbite.com"
+            value={formState.parents_name}
+            onChange={(e) =>
+              setFormState({ ...formState, parents_name: e.target.value })
+            }
+            id="ParentName"
+            type="text"
+            required
+            className="w-full"
+          />
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <div className="mb-2 block">
+            <Label htmlFor="parentAddress" value="Parent's Address" />
+          </div>
+          <TextInput
+            value={formState.parents_address}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                parents_address: e.target.value,
+              })
+            }
+            id="parentAddress"
+            type="text"
             required
           />
         </div>
         <div className="col-span-2 md:col-span-1">
           <div className="mb-2 block">
-            <Label htmlFor="password1" value="Your password" />
+            <Label
+              htmlFor="parentContactNumber"
+              value="Parent's Contact Number"
+            />
           </div>
-          <TextInput id="password1" type="password" required />
-        </div> */}
+          <TextInput
+            value={formState.last_vaccination_given}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                last_vaccination_given: e.target.value,
+              })
+            }
+            id="parentContactNumber"
+            type="text"
+            required
+          />
+        </div>
         <div className="col-span-2">
-          <div className="mb-2 block">
-            <Label htmlFor="ParentName" value="Parent Name" />
-          </div>
-          <TextInput id="ParentName" type="text" required className="w-full" />
+          <h1>Patient Information</h1>
         </div>
         <div className="col-span-2">
           <div className="mb-2 block">
-            <Label htmlFor="PatientInformation" value="Patient Information" />
+            <Label htmlFor="PatientInformation" value="Pet Name" />
           </div>
           <TextInput
+            value={formState.pets_name}
+            onChange={(e) =>
+              setFormState({ ...formState, pets_name: e.target.value })
+            }
             id="PatientInformation"
             type="text"
             required
             className="w-full"
+          />
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <div className="mb-2 block">
+            <Label htmlFor="petSpecies" value="Pet Species" />
+          </div>
+          <TextInput
+            value={formState.pets_species}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                pets_species: e.target.value,
+              })
+            }
+            id="petSpecies"
+            type="text"
+            required
+          />
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <div className="mb-2 block">
+            <Label htmlFor="petBreed" value="Pet Breed" />
+          </div>
+          <TextInput
+            value={formState.pets_breed}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                pets_breed: e.target.value,
+              })
+            }
+            id="petBreed"
+            type="text"
+            required
+          />
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <div className="mb-2 block">
+            <Label htmlFor="petSex" value="Pet Sex" />
+          </div>
+          <Select
+            value={formState.pets_sex}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                pets_sex: e.target.value,
+              })
+            }
+            id="petSex"
+            type="text"
+            required
+            placeholder=""
+          >
+            <option>Mx</option>
+            <option>Fx</option>
+          </Select>
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <div className="mb-2 block">
+            <Label htmlFor="petBirthday" value="Pet Birthday" />
+          </div>
+          <TextInput
+            value={formState.pets_birthday}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                pets_birthday: e.target.value,
+              })
+            }
+            id="petBirthday"
+            type="date"
+            required
           />
         </div>
         <div className="col-span-2">
@@ -44,6 +217,10 @@ const CreateRecordPage = () => {
             <Label htmlFor="history" value="History" />
           </div>
           <Textarea
+            value={formState.chief_complaint}
+            onChange={(e) =>
+              setFormState({ ...formState, chief_complaint: e.target.value })
+            }
             id="history"
             type="text"
             required
@@ -59,6 +236,13 @@ const CreateRecordPage = () => {
             />
           </div>
           <TextInput
+            value={formState.medication_given_prior_to_check_up}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                medication_given_prior_to_check_up: e.target.value,
+              })
+            }
             id="medicationCheckup"
             type="text"
             required
@@ -72,13 +256,35 @@ const CreateRecordPage = () => {
           <div className="mb-2 block">
             <Label htmlFor="lastBrand" value="Brand" />
           </div>
-          <TextInput id="lastBrand" type="text" required />
+          <TextInput
+            value={formState.last_vaccination_given}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                last_vaccination_given: e.target.value,
+              })
+            }
+            id="lastBrand"
+            type="text"
+            required
+          />
         </div>
         <div className="col-span-2 md:col-span-1">
           <div className="mb-2 block">
             <Label htmlFor="lastDate" value="Date" />
           </div>
-          <TextInput id="lastDate" type="text" required />
+          <TextInput
+            value={formState.last_vaccination_date}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                last_vaccination_date: e.target.value,
+              })
+            }
+            id="lastDate"
+            type="text"
+            required
+          />
         </div>
         <div className="col-span-2">
           <h3>Last de-worming given</h3>
@@ -87,13 +293,35 @@ const CreateRecordPage = () => {
           <div className="mb-2 block">
             <Label htmlFor="wormingBrand" value="Brand" />
           </div>
-          <TextInput id="wormingBrand" type="text" required />
+          <TextInput
+            value={formState.last_deworming_brand}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                last_deworming_brand: e.target.value,
+              })
+            }
+            id="wormingBrand"
+            type="text"
+            required
+          />
         </div>
         <div className="col-span-2 md:col-span-1">
           <div className="mb-2 block">
             <Label htmlFor="wormingDate" value="Date" />
           </div>
-          <TextInput id="wormingDate" type="text" required />
+          <TextInput
+            value={formState.last_deworming_date}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                last_deworming_date: e.target.value,
+              })
+            }
+            id="wormingDate"
+            type="date"
+            required
+          />
         </div>
         <div className="col-span-2">
           <div className="mb-2 block">
@@ -102,12 +330,24 @@ const CreateRecordPage = () => {
               value="Was the patient transferred from or referred by another clinic?"
             />
           </div>
-          <TextInput
+          <Select
             id="patientTransferred"
             type="text"
             required
             className="w-full"
-          />
+            value={
+              formState.is_transferred_from_other_clinic ? "True" : "False"
+            }
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                is_transferred_from_other_clinic: e.target.value === "True",
+              })
+            }
+          >
+            <option>True</option>
+            <option>False</option>
+          </Select>
         </div>
         <div className="col-span-2">
           <h3>Physical Examination</h3>
@@ -117,31 +357,88 @@ const CreateRecordPage = () => {
           <div className="mb-2 block">
             <Label htmlFor="weight" value="Weight" />
           </div>
-          <TextInput id="weight" type="text" required />
+          <TextInput
+            value={formState.weight}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                weight: e.target.value,
+              })
+            }
+            id="weight"
+            type="number"
+            required
+          />
         </div>
         <div className="col-span-2 md:col-span-1">
           <div className="mb-2 block">
             <Label htmlFor="initialTemp" value="Initial Temperature" />
           </div>
-          <TextInput id="initialTemp" type="text" required />
+          <TextInput
+            value={formState.initial_temp}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                initial_temp: e.target.value,
+              })
+            }
+            id="initialTemp"
+            type="number"
+            required
+          />
         </div>
         <div className="col-span-2 md:col-span-1">
           <div className="mb-2 block">
             <Label htmlFor="hr" value="HR" />
           </div>
-          <TextInput id="hr" type="text" required />
+          <Select
+            value={formState.is_HR ? "True" : "False"}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                is_HR: e.target.value === "True",
+              })
+            }
+            id="hr"
+            type="text"
+            required
+          >
+            <option>True</option>
+            <option>False</option>
+          </Select>
         </div>
         <div className="col-span-2 md:col-span-1">
           <div className="mb-2 block">
             <Label htmlFor="rr" value="RR" />
           </div>
-          <TextInput id="rr" type="text" required />
+          <Select
+            value={formState.is_RR ? "True" : "False"}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                is_RR: e.target.value === "True",
+              })
+            }
+            id="rr"
+            type="text"
+            required
+          >
+            <option>True</option>
+            <option>False</option>
+          </Select>
         </div>
         <div className="col-span-2">
           <div className="mb-2 block">
             <Label htmlFor="abnormalFindings" value="Abnormal Findings" />
           </div>
           <Textarea
+            value={formState.abnormal_findings}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                abnormal_findings: e.target.value,
+              })
+            }
             id="abnormalFindings"
             type="text"
             required
@@ -149,23 +446,53 @@ const CreateRecordPage = () => {
             rows={4}
           />
         </div>
-        <div className="col-span-2 md:col-span-1 ">
+        {/* <div className="col-span-2 md:col-span-1 ">
           <div className="mb-2 block">
-            <Label htmlFor="rr" value="RR" />
+            <Label htmlFor="rr" value="CBC" />
           </div>
-          <TextInput id="rr" type="text" required />
-        </div>
+          <TextInput
+            value={formState.is_cbc}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                is_cbc: e.target.value,
+              })
+            }
+            id="rr"
+            type="text"
+            required
+          />
+        </div> */}
         <div className="col-span-2">
           <div className="mb-2 block">
             <Label htmlFor="prognosis" value="Prognosis" />
           </div>
-          <TextInput id="prognosis" type="text" required className="w-full" />
+          <TextInput
+            value={formState.prognosis}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                prognosis: e.target.value,
+              })
+            }
+            id="prognosis"
+            type="text"
+            required
+            className="w-full"
+          />
         </div>
         <div className="col-span-2">
           <div className="mb-2 block">
             <Label htmlFor="tentativeDiagnosis" value="Tentative Diagnosis" />
           </div>
           <TextInput
+            value={formState.tentative_diagnosis}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                tentative_diagnosis: e.target.value,
+              })
+            }
             id="tentativeDiagnosis"
             type="text"
             required
@@ -177,6 +504,13 @@ const CreateRecordPage = () => {
             <Label htmlFor="treatmentGiven" value="Treatment Given" />
           </div>
           <TextInput
+            value={formState.treatment_given}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                treatment_given: e.target.value,
+              })
+            }
             id="treatmentGiven"
             type="text"
             required
@@ -188,23 +522,49 @@ const CreateRecordPage = () => {
             <Label htmlFor="takeHomeMeds" value="Take Home Meds" />
           </div>
           <TextInput
+            value={formState.take_home_meds}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                take_home_meds: e.target.value,
+              })
+            }
             id="takeHomeMeds"
             type="text"
             required
             className="w-full"
           />
         </div>
-        <div className="col-span-2">
+        {/* <div className="col-span-2">
           <div className="mb-2 block">
             <Label htmlFor="prognosis" value="Prognosis" />
           </div>
-          <TextInput id="prognosis" type="text" required className="w-full" />
-        </div>
+          <TextInput
+            value={formState.recommendations}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                recommendations: e.target.value,
+              })
+            }
+            id="prognosis"
+            type="text"
+            required
+            className="w-full"
+          />
+        </div> */}
         <div className="col-span-2">
           <div className="mb-2 block">
             <Label htmlFor="recommendations" value="Recommendations" />
           </div>
           <Textarea
+            value={formState.recommendations}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                recommendations: e.target.value,
+              })
+            }
             id="recommendations"
             type="text"
             required
@@ -217,16 +577,24 @@ const CreateRecordPage = () => {
             <Label htmlFor="followUpCheckup" value="Follow up check up" />
           </div>
           <TextInput
+            pattern="\d{4}-\d{2}-\d{2}"
+            value={formState.followup_checkup_date}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                followup_checkup_date: e.target.value,
+              })
+            }
             id="followUpCheckup"
-            type="text"
+            type="date"
             required
             className="w-full"
           />
         </div>
         <div className="text-black">
           <button
-            type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            type="submit"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
             Submit
           </button>
