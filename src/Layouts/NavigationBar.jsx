@@ -1,12 +1,40 @@
-import { Link, Outlet } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from "react";
+import { Link, Outlet, Navigate } from "react-router-dom";
+import useGetUser from "../hooks/User/User";
+import { Avatar, Dropdown } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import useLoginFetch from "../hooks/Authentication/Login";
 
 const Layout = () => {
+  const navigate = useNavigate();
+
+  const { isAuthenticated } = useLoginFetch();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const { user, getUserFromAPI } = useGetUser();
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  useEffect(() => {
+    getUserFromAPI();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      return navigate("/");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-screen">
       <nav className="fixed top-0 left-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -14,8 +42,7 @@ const Layout = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start rtl:justify-end">
               <button
-              onClick={toggleSidebar}
-
+                onClick={toggleSidebar}
                 data-drawer-target="logo-sidebar"
                 data-drawer-toggle="logo-sidebar"
                 aria-controls="logo-sidebar"
@@ -38,89 +65,47 @@ const Layout = () => {
                 </svg>
               </button>
               <a
-                href="https://flowbite.com"
                 className="flex ms-2 md:me-24"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img
-                  src="https://flowbite.com/docs/images/logo.svg"
-                  className="h-8 me-3"
-                  alt="FlowBite Logo"
-                />
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                  Joseph Pogi
+                  Joseph Animal Clinic System
                 </span>
               </a>
             </div>
-            <div className="flex items-center">
-              <div className="flex items-center ms-3">
-                <div>
-                  <button
-                    type="button"
-                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                    aria-expanded="false"
-                    data-dropdown-toggle="dropdown-user"
+            <div class="flex items-center">
+              <div class="flex items-center ms-3">
+                <div className="flex md:order-2">
+                  <Dropdown
+                    arrowIcon={false}
+                    inline
+                    label={
+                      <div className="w-8 h-8">
+                        <Avatar
+                          alt="User settings"
+                          img={
+                            user?.profilePicture ||
+                            "https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                          }
+                          rounded
+                          className="w-full h-full"
+                        />
+                      </div>
+                    }
                   >
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                      alt="user photo"
-                    />
-                  </button>
-                </div>
-                <div
-                  className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
-                  id="dropdown-user"
-                  role="presentation"
-                >
-                  <div className="px-4 py-3">
-                    <p className="text-sm text-gray-900 dark:text-white">
-                      Neil Sims
-                    </p>
-                    <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
-                      neil.sims@flowbite.com
-                    </p>
-                  </div>
-                  <ul className="py-1" role="menu" aria-label="User menu">
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Dashboard
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Earnings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Sign out
-                      </a>
-                    </li>
-                  </ul>
+                    <Dropdown.Header>
+                      <span className="block text-sm">
+                        {user?.name || user?.username || ""}
+                      </span>
+                      <span className="block truncate text-sm font-medium">
+                        {user?.email || "Loading..."}
+                      </span>
+                    </Dropdown.Header>
+                    <Dropdown.Item onClick={handleLogout}>
+                      Sign out
+                    </Dropdown.Item>
+                  </Dropdown>
                 </div>
               </div>
             </div>
@@ -130,11 +115,11 @@ const Layout = () => {
 
       <div className="flex flex-grow">
         <aside
-            id="logo-sidebar"
-            className={`fixed top-0 left-0 z-40 w-64 h-full pt-20 transition-transform ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700`}
-            aria-label="Sidebar"
+          id="logo-sidebar"
+          className={`fixed top-0 left-0 z-40 w-64 h-full pt-20 transition-transform ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700`}
+          aria-label="Sidebar"
         >
           <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
             <ul className="space-y-2 font-medium">

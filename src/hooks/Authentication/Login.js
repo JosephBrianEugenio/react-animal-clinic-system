@@ -11,6 +11,7 @@ const useLoginFetch = () => {
         username: userName,
         password: password,
       });
+      console.log("response login", response);
       if (response.statusText === "OK") {
         localStorage.setItem("access_token", response.data.data.access_token);
         setSuccess(true);
@@ -24,6 +25,12 @@ const useLoginFetch = () => {
       return { success: false, message: errorMessage };
     }
   };
-  return { login, success };
+
+  const isAuthenticated = () => {
+    const accessToken = localStorage.getItem("access_token");
+    return accessToken ? true : false;
+  };
+
+  return { login, success, isAuthenticated };
 };
 export default useLoginFetch;

@@ -1,5 +1,5 @@
 import useCreateRecords from "../hooks/Records/CreateNewRecord";
-import {  Label, TextInput, Textarea, Select } from "flowbite-react";
+import { Label, TextInput, Textarea, Select } from "flowbite-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +50,9 @@ const CreateRecordPage = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4">
-      <div className="text-start">Create Record</div>
+      <div className="text-start">
+        <h1>Create Record</h1>
+      </div>
       <form
         className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left"
         onSubmit={onHandleSubmit}
