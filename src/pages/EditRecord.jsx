@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
-import { Button, Label, TextInput, Textarea, Select } from "flowbite-react";
+import { Label, TextInput, Textarea, Select } from "flowbite-react";
 import useGetRecordFetch from "../hooks/Records/GetRecords";
 import useDeleteRecord from "../hooks/Records/DeleteRecords";
-import { useParams } from "react-router-dom";
+import useEditRecord from "../hooks/Records/EditRecord";
+import { useParams, useNavigate } from "react-router-dom";
 
-const EditRecordpage = () => {
-  const { getAnimalRecordByIdFromAPI, recordsById, loading } =
-    useGetRecordFetch();
-
-    const { deleteAnimalRecordByIdFromAPI } = useDeleteRecord()
-
+const EditRecordPage = () => {
+  const {
+    getAnimalRecordByIdFromAPI,
+    recordsById,
+    loading: recordLoading,
+  } = useGetRecordFetch();
+  const { deleteAnimalRecordByIdFromAPI } = useDeleteRecord();
+  const {
+    editRecordFromAPI,
+    loading: editLoading,
+    error: editError,
+  } = useEditRecord();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [record, setRecord] = useState(null);
 
@@ -20,11 +28,11 @@ const EditRecordpage = () => {
     }
   }, [id, getAnimalRecordByIdFromAPI]);
 
-  //   useEffect(() => {
-  //     if (recordsById) {
-  //       setRecord(recordsById);
-  //     }
-  //   }, [recordsById]);
+  useEffect(() => {
+    if (recordsById) {
+      setRecord(recordsById);
+    }
+  }, [recordsById]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,24 +43,42 @@ const EditRecordpage = () => {
   };
 
   const handleDeleteRecord = async () => {
-    if (!id) return; // Ensure id is valid before attempting to delete
-
+    if (!id) return;
     try {
       await deleteAnimalRecordByIdFromAPI(id);
-      // Optionally show success message or handle further actions (e.g., redirect)
-    //   history.push("/records"); 
+      console.log("should be routes");
+      // navigate.push("/records");
     } catch (error) {
-      // Handle error (e.g., show error message)
       console.error("Delete Error:", error);
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!id || !record) return;
+
+    try {
+      await editRecordFromAPI(id, record);
+      history.push("/records");
+    } catch (error) {
+      console.error("Edit Error:", error);
+    }
+  };
+
+  if (recordLoading || editLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!record) {
+    return <p>No record found.</p>;
+  }
+
   return (
     <>
-      <div className="flex justify-between px-20 pb-10">
-        <button type="button">
+      <div className="flex justify-between px-10 pb-10">
+        <button type="button" onClick={() => history.push("/records")}>
           <svg
-            class="w-6 h-6 text-gray-800 dark:text-white"
+            className="w-6 h-6 text-gray-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -72,7 +98,7 @@ const EditRecordpage = () => {
         <h3>Edit Record</h3>
         <button onClick={handleDeleteRecord} type="button">
           <svg
-            class="w-6 h-6 text-gray-800 dark:text-white"
+            className="w-6 h-6 text-gray-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -91,7 +117,11 @@ const EditRecordpage = () => {
         </button>
       </div>
       <div className="max-w-screen-xl mx-auto px-4">
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+        <form
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left"
+          onSubmit={handleSubmit}
+        >
+          {/* Form fields with handleInputChange as onChange handler and value from record state */}
           <div className="col-span-2">
             <h1>Parent Information</h1>
           </div>
@@ -100,17 +130,27 @@ const EditRecordpage = () => {
               <Label htmlFor="ParentName" value="Parent Name" />
             </div>
             <TextInput
+              name="parents_name"
+              value={record.parents_name || ""}
               id="ParentName"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="parentAddress" value="Parent's Address" />
             </div>
-            <TextInput id="parentAddress" type="text" required />
+            <TextInput
+              name="parents_address"
+              value={record.parents_address || ""}
+              id="parentAddress"
+              type="text"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
@@ -119,7 +159,14 @@ const EditRecordpage = () => {
                 value="Parent's Contact Number"
               />
             </div>
-            <TextInput id="parentContactNumber" type="text" required />
+            <TextInput
+              name="parents_contact_number"
+              value={record.parents_contact_number || ""}
+              id="parentContactNumber"
+              type="text"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2">
             <h1>Patient Information</h1>
@@ -129,49 +176,83 @@ const EditRecordpage = () => {
               <Label htmlFor="PatientInformation" value="Pet Name" />
             </div>
             <TextInput
+              name="pets_name"
+              value={record.pets_name || ""}
               id="PatientInformation"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="petSpecies" value="Pet Species" />
             </div>
-            <TextInput id="petSpecies" type="text" required />
+            <TextInput
+              name="pets_species"
+              value={record.pets_species || ""}
+              id="petSpecies"
+              type="text"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="petBreed" value="Pet Breed" />
             </div>
-            <TextInput id="petBreed" type="text" required />
+            <TextInput
+              name="pets_breed"
+              value={record.pets_breed || ""}
+              id="petBreed"
+              type="text"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="petSex" value="Pet Sex" />
             </div>
-            <Select id="petSex" type="text" required placeholder="">
-              <option>Mx</option>
-              <option>Fx</option>
+            <Select
+              name="pets_sex"
+              value={record.pets_sex || ""}
+              id="petSex"
+              type="text"
+              required
+              onChange={handleInputChange}
+            >
+              <option value="Mx">Mx</option>
+              <option value="Fx">Fx</option>
             </Select>
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="petBirthday" value="Pet Birthday" />
             </div>
-            <TextInput id="petBirthday" type="date" required />
+            <TextInput
+              name="pets_birthday"
+              value={record.pets_birthday || ""}
+              id="petBirthday"
+              type="date"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2">
             <div className="mb-2 block">
               <Label htmlFor="history" value="History" />
             </div>
             <Textarea
+              name="chief_complaint"
+              value={record.chief_complaint || ""}
               id="history"
               type="text"
               required
               className="w-full"
               rows={4}
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
@@ -182,10 +263,13 @@ const EditRecordpage = () => {
               />
             </div>
             <TextInput
+              name="medication_given_prior_to_check_up"
+              value={record.medication_given_prior_to_check_up || ""}
               id="medicationCheckup"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
@@ -195,13 +279,27 @@ const EditRecordpage = () => {
             <div className="mb-2 block">
               <Label htmlFor="lastBrand" value="Brand" />
             </div>
-            <TextInput id="lastBrand" type="text" required />
+            <TextInput
+              name="last_vaccination_given"
+              value={record.last_vaccination_given || ""}
+              id="lastBrand"
+              type="text"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="lastDate" value="Date" />
             </div>
-            <TextInput id="lastDate" type="text" required />
+            <TextInput
+              name="last_vaccination_date"
+              value={record.last_vaccination_date || ""}
+              id="lastDate"
+              type="date"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2">
             <h3>Last de-worming given</h3>
@@ -210,13 +308,27 @@ const EditRecordpage = () => {
             <div className="mb-2 block">
               <Label htmlFor="wormingBrand" value="Brand" />
             </div>
-            <TextInput id="wormingBrand" type="text" required />
+            <TextInput
+              name="last_deworming_brand"
+              value={record.last_deworming_brand || ""}
+              id="wormingBrand"
+              type="text"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="wormingDate" value="Date" />
             </div>
-            <TextInput id="wormingDate" type="date" required />
+            <TextInput
+              name="last_deworming_date"
+              value={record.last_deworming_date || ""}
+              id="wormingDate"
+              type="date"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2">
             <div className="mb-2 block">
@@ -226,47 +338,77 @@ const EditRecordpage = () => {
               />
             </div>
             <Select
+              name="is_transferred_from_other_clinic"
+              value={record.is_transferred_from_other_clinic ? "True" : "False"}
               id="patientTransferred"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             >
-              <option>True</option>
-              <option>False</option>
+              <option value="True">True</option>
+              <option value="False">False</option>
             </Select>
           </div>
           <div className="col-span-2">
             <h3>Physical Examination</h3>
           </div>
-
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="weight" value="Weight" />
             </div>
-            <TextInput id="weight" type="number" required />
+            <TextInput
+              name="weight"
+              value={record.weight || ""}
+              id="weight"
+              type="number"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="initialTemp" value="Initial Temperature" />
             </div>
-            <TextInput id="initialTemp" type="number" required />
+            <TextInput
+              name="initial_temp"
+              value={record.initial_temp || ""}
+              id="initialTemp"
+              type="number"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="hr" value="HR" />
             </div>
-            <Select id="hr" type="text" required>
-              <option>True</option>
-              <option>False</option>
+            <Select
+              name="is_HR"
+              value={record.is_HR ? "True" : "False"}
+              id="hr"
+              type="text"
+              required
+              onChange={handleInputChange}
+            >
+              <option value="True">True</option>
+              <option value="False">False</option>
             </Select>
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="rr" value="RR" />
             </div>
-            <Select id="rr" type="text" required>
-              <option>True</option>
-              <option>False</option>
+            <Select
+              name="is_RR"
+              value={record.is_RR ? "True" : "False"}
+              id="rr"
+              type="text"
+              required
+              onChange={handleInputChange}
+            >
+              <option value="True">True</option>
+              <option value="False">False</option>
             </Select>
           </div>
           <div className="col-span-2">
@@ -274,28 +416,42 @@ const EditRecordpage = () => {
               <Label htmlFor="abnormalFindings" value="Abnormal Findings" />
             </div>
             <Textarea
+              name="abnormal_findings"
+              value={record.abnormal_findings || ""}
               id="abnormalFindings"
               type="text"
               required
               className="w-full"
               rows={4}
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
             <div className="mb-2 block">
               <Label htmlFor="prognosis" value="Prognosis" />
             </div>
-            <TextInput id="prognosis" type="text" required className="w-full" />
+            <TextInput
+              name="prognosis"
+              value={record.prognosis || ""}
+              id="prognosis"
+              type="text"
+              required
+              className="w-full"
+              onChange={handleInputChange}
+            />
           </div>
           <div className="col-span-2">
             <div className="mb-2 block">
               <Label htmlFor="tentativeDiagnosis" value="Tentative Diagnosis" />
             </div>
             <TextInput
+              name="tentative_diagnosis"
+              value={record.tentative_diagnosis || ""}
               id="tentativeDiagnosis"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
@@ -303,10 +459,13 @@ const EditRecordpage = () => {
               <Label htmlFor="treatmentGiven" value="Treatment Given" />
             </div>
             <TextInput
+              name="treatment_given"
+              value={record.treatment_given || ""}
               id="treatmentGiven"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
@@ -314,10 +473,13 @@ const EditRecordpage = () => {
               <Label htmlFor="takeHomeMeds" value="Take Home Meds" />
             </div>
             <TextInput
+              name="take_home_meds"
+              value={record.take_home_meds || ""}
               id="takeHomeMeds"
               type="text"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
@@ -325,11 +487,14 @@ const EditRecordpage = () => {
               <Label htmlFor="recommendations" value="Recommendations" />
             </div>
             <Textarea
+              name="recommendations"
+              value={record.recommendations || ""}
               id="recommendations"
               type="text"
               required
               className="w-full"
               rows={4}
+              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">
@@ -337,11 +502,14 @@ const EditRecordpage = () => {
               <Label htmlFor="followUpCheckup" value="Follow up check up" />
             </div>
             <TextInput
+              name="followup_checkup_date"
+              value={record.followup_checkup_date || ""}
               pattern="\d{4}-\d{2}-\d{2}"
               id="followUpCheckup"
               type="date"
               required
               className="w-full"
+              onChange={handleInputChange}
             />
           </div>
           <div className="text-black">
@@ -349,7 +517,7 @@ const EditRecordpage = () => {
               type="submit"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
-              Submit
+              Save
             </button>
           </div>
         </form>
@@ -358,4 +526,4 @@ const EditRecordpage = () => {
   );
 };
 
-export default EditRecordpage;
+export default EditRecordPage;

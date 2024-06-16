@@ -22,10 +22,10 @@ const useGetRecordFetch = () => {
   };
 
   const getAnimalRecordByIdFromAPI = useCallback(async (id) => {
-    console.log("iddddd", id);
     setLoading(true);
     try {
-      const response = await HTTP_API().get(`display_medical_history/${id}/`);
+      console.log("iddddd", id);
+      const response = await HTTP_API().get(`display_medical_record/${id}/`);
       console.log("response", response);
       setRecordsById(response.data.data);
     } catch (err) {

@@ -36,19 +36,6 @@ const CreateRecordPage = () => {
     followup_checkup_date: "2004-12-12",
   });
 
-  const [dateInput, setDateInput] = useState("");
-
-  const handleChange = (e) => {
-    const { value } = e.target;
-    // Only update state if the value is a number
-    if (/^\d*$/.test(value)) {
-      setFormState({
-        ...formState,
-        weight: value,
-      });
-    }
-  };
-
   const onHandleSubmit = async (e) => {
     e.preventDefault();
     const result = await createRecord(formState);
