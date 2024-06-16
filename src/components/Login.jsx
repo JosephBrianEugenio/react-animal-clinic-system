@@ -8,8 +8,8 @@ const LoginComponent = () => {
 
   const userRef = useRef(null);
   const errRef = useRef(null);
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState("admin");
+  const [password, setPassword] = useState("admin");
   const { login, errMsg, success } = useLoginFetch();
 
   useEffect(() => {
@@ -43,17 +43,16 @@ const LoginComponent = () => {
           <h6 className="text-4xl font-bold text-center py-6">Joseph</h6>
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="text-start block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Email
+              Username
             </label>
             <input
               type="text"
-              id="email"
+              id="username"
               ref={userRef}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="user@email.com"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               required
@@ -71,7 +70,6 @@ const LoginComponent = () => {
               id="password"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
-              placeholder="*****"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

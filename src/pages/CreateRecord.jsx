@@ -1,51 +1,52 @@
 import useCreateRecords from "../hooks/Records/CreateNewRecord";
-import { Button, Label, TextInput, Textarea, Select } from "flowbite-react";
+import {  Label, TextInput, Textarea, Select } from "flowbite-react";
 import { useState } from "react";
-import { Datepicker } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 const CreateRecordPage = () => {
   const { createRecord } = useCreateRecords();
 
+  const navigate = useNavigate();
+
   const [formState, setFormState] = useState({
-    parents_name: "test",
-    parents_address: "test",
-    parents_contact_number: "test",
-    pets_name: "test",
-    pet_species: "test",
-    pets_breed: "test",
-    pets_sex: "Mx",
-    pets_birthday: "2004-12-12",
-    chief_complaint: "test",
-    medication_given_prior_to_check_up: "test",
-    last_vaccination_given: "test",
-    last_vaccination_date: "2004-12-12",
-    last_deworming_brand: "test",
-    last_deworming_date: "2004-12-12",
-    is_transferred_from_other_clinic: false,
-    weight: "test",
-    initial_temp: "test",
-    is_HR: false,
-    is_RR: false,
-    abnormal_findings: "test",
-    is_cbc: false,
-    prognosis: "test",
-    tentative_diagnosis: "test",
-    treatment_given: "test",
-    take_home_meds: "tesdt",
-    recommendations: "test",
-    followup_checkup_date: "2004-12-12",
+    parents_name: "",
+    parents_address: "",
+    parents_contact_number: "",
+    pets_name: "",
+    pet_species: "",
+    pets_breed: "",
+    pets_sex: "",
+    pets_birthday: "",
+    chief_complaint: "",
+    medication_given_prior_to_check_up: "",
+    last_vaccination_given: "",
+    last_vaccination_date: "",
+    last_deworming_brand: "",
+    last_deworming_date: "",
+    is_transferred_from_other_clinic: "",
+    weight: "",
+    initial_temp: "",
+    is_HR: "",
+    is_RR: "",
+    abnormal_findings: "",
+    is_cbc: "",
+    prognosis: "",
+    tentative_diagnosis: "",
+    treatment_given: "",
+    take_home_meds: "",
+    recommendations: "",
+    followup_checkup_date: "",
   });
 
   const onHandleSubmit = async (e) => {
     e.preventDefault();
     const result = await createRecord(formState);
 
-    if (result) {
-      console.log("resultsss");
+    if (result.success) {
+      navigate("/records");
       return;
     }
   };
-
 
   return (
     <div className="max-w-screen-xl mx-auto px-4">
@@ -178,8 +179,8 @@ const CreateRecordPage = () => {
             required
             placeholder=""
           >
-            <option>Mx</option>
-            <option>Fx</option>
+            <option>M</option>
+            <option>F</option>
           </Select>
         </div>
         <div className="col-span-2 md:col-span-1">

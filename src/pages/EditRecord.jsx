@@ -46,8 +46,7 @@ const EditRecordPage = () => {
     if (!id) return;
     try {
       await deleteAnimalRecordByIdFromAPI(id);
-      console.log("should be routes");
-      // navigate.push("/records");
+      navigate("/records");
     } catch (error) {
       console.error("Delete Error:", error);
     }
