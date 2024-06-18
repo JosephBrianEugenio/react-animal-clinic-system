@@ -20,6 +20,8 @@ const EditRecordPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [record, setRecord] = useState(null);
 
   useEffect(() => {
@@ -52,15 +54,22 @@ const EditRecordPage = () => {
     }
   };
 
+  const onHandleRedirectBackButton = () => {
+    navigate("/records");
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!id || !record) return;
+    setIsLoading(true);
 
     try {
       await editRecordFromAPI(id, record);
       history.push("/records");
     } catch (error) {
       console.error("Edit Error:", error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -75,7 +84,7 @@ const EditRecordPage = () => {
   return (
     <>
       <div className="flex justify-between px-10 pb-10">
-        <button type="button" onClick={() => history.push("/records")}>
+        <button type="button" onClick={onHandleRedirectBackButton}>
           <svg
             className="w-6 h-6 text-gray-800 dark:text-white"
             aria-hidden="true"

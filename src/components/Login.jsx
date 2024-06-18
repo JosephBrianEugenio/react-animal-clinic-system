@@ -8,6 +8,7 @@ const LoginComponent = () => {
 
   const userRef = useRef(null);
   const errRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState("admin");
   const [password, setPassword] = useState("admin");
   const { login, errMsg, success } = useLoginFetch();
@@ -20,7 +21,9 @@ const LoginComponent = () => {
 
   const onHandleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const result = await login(userName, password);
+    setIsLoading(false);
 
     if (result.success) {
       navigate("/records");
@@ -77,8 +80,9 @@ const LoginComponent = () => {
           <button
             type="submit"
             className="border w-full my-5 py-2 hover:bg-indigo-500 text-white button"
+            disabled={isLoading}
           >
-            Sign In
+             {isLoading ? "Loading..." : "Sign In"}
           </button>
         </form>
       </div>

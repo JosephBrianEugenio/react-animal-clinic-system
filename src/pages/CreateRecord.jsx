@@ -38,10 +38,13 @@ const CreateRecordPage = () => {
     followup_checkup_date: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onHandleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const result = await createRecord(formState);
-
+    setIsLoading(false);
     if (result.success) {
       navigate("/records");
       return;
@@ -100,15 +103,15 @@ const CreateRecordPage = () => {
             />
           </div>
           <TextInput
-            value={formState.last_vaccination_given}
+            value={formState.parents_contact_number}
             onChange={(e) =>
               setFormState({
                 ...formState,
-                last_vaccination_given: e.target.value,
+                parents_contact_number: e.target.value,
               })
             }
             id="parentContactNumber"
-            type="text"
+            type="number"
             required
           />
         </div>
@@ -272,7 +275,7 @@ const CreateRecordPage = () => {
               })
             }
             id="lastDate"
-            type="text"
+            type="date"
             required
           />
         </div>
@@ -584,9 +587,10 @@ const CreateRecordPage = () => {
         <div className="text-black">
           <button
             type="submit"
+            disabled={isLoading}
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            Submit
+            {isLoading ? "Loading..." : "Submit"}
           </button>
         </div>
       </form>

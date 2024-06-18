@@ -5,6 +5,18 @@ import { toast } from "react-toastify";
 const useCreateRecords = () => {
   const [success, setSuccess] = useState(false);
 
+  const formatErrorMessages = (errors) => {
+    const messages = [];
+    for (const property in errors) {
+      if (errors.hasOwnProperty(property) && errors[property].length > 0) {
+        errors[property].forEach((message) => {
+          messages.push(`${property}: ${message}`);
+        });
+      }
+    }
+    return messages.join(', ');
+  };
+
   const createRecord = async (payload) => {
     console.log("payload", payload);
     try {
@@ -20,7 +32,7 @@ const useCreateRecords = () => {
       }
     } catch (e) {
       console.error(e.response.data);
-      let errorMessage = e.response.data.errors.pets_sex[0];
+      let errorMessage = formatErrorMessages(e.response.data.errors);
       toast.error(errorMessage);
       return { success: false, message: errorMessage };
     }
